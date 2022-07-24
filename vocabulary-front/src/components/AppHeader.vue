@@ -1,5 +1,11 @@
 <script setup>
 import AppButton from "@/components/UI/AppButton.vue";
+
+const getData = async () => {
+  const data = await fetch('http://localhost:8000');
+  const json = await data.json();
+  console.log(json);
+}
 </script>
 
 <template>
@@ -7,7 +13,7 @@ import AppButton from "@/components/UI/AppButton.vue";
     <div class="container">
       <div class="header__wrapper">
         <router-link class="header__title" to="/">Vocabulary</router-link>
-        <app-button>Add new word</app-button>
+        <app-button @click="getData">Add new word</app-button>
       </div>
     </div>
   </header>

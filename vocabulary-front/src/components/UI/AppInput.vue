@@ -42,6 +42,10 @@
     padding: 0.5rem 1rem;
     border-radius: 6px;
     border: 1px solid $dark-color;
+    outline: none;
+    &:focus {
+      border: 1px solid $main-color;
+    }
   }
 
 </style>
