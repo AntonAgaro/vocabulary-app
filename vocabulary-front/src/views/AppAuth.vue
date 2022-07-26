@@ -8,12 +8,33 @@ const userData = ref({
   password: ''
 })
 
+const sendUserData = async () => {
+  const data = {
+    login: userData.value.login,
+    password: userData.value.password
+  }
+  try {
+    const response = await fetch('http://localhost:8000/login', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+    })
+    const json = await response.json();
+    console.log(json);
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 </script>
 
 <template>
   <div class="container">
     <h2 class="title">Sign In</h2>
-    <form class="form">
+    <form class="form" @submit.prevent="sendUserData">
       <app-input
         type="text"
         id="login"
