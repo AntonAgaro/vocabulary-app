@@ -38,6 +38,22 @@ app.post('/login', async (req, res) => {
         });
         connection.release();
     })
+});
+// INSERT INTO users(login, password) VALUES
+app.post('/signup', async (req, res) => {
+    console.log(req.body);
+    await pool.getConnection((err, connection) => {
+        if (err) {
+            console.log(err)
+        }
+        connection.query(`INSERT INTO users (login, password) VALUES ('${req.body.login}', '${req.body.password}')`, (err, data) => {
+            if (err) {
+                console.log(err)
+            }
+            res.send(`Создан пользователь с login: ${req.body.login}, id: ${data.insertId}`);
+        });
+        connection.release();
+    })
 })
 
 app.listen(PORT, () => {

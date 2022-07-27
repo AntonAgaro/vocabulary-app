@@ -9,12 +9,37 @@ const userData = ref({
   confirmPass: ''
 })
 
+const createUser = async () => {
+  const {login, password, confirmPass } = userData.value;
+  if (!login || !password || !confirmPass || (password !== confirmPass)) return;
+  try {
+    const data = {login, password};
+    const response = await fetch('http://localhost:8000/signup', {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+    });
+    console.log(response);
+    const json = response.json();
+    console.log(json);
+  } catch (e) {
+    console.log(e)
+  } finally {
+    userData.value.login = '';
+    userData.value.password = '';
+    userData.value.confirmPass = '';
+  }
+}
+
 </script>
 
 <template>
   <div class="container">
     <h2 class="title">Sign Up</h2>
-    <form class="form">
+    <form class="form" @submit.prevent="createUser">
       <app-input
         type="text"
         id="login"
