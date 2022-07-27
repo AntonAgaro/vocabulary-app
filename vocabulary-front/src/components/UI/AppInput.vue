@@ -21,7 +21,6 @@
       :id="props.id"
       :type="props.type"
     >
-    {{ props.modelValue}}
   </label>
 </template>
 

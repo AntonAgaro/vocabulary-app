@@ -1,5 +1,10 @@
+<script lang="ts" setup>
+  const props = defineProps({
+    isDisabled: Boolean
+  })
+</script>
 <template>
-  <button class="button">
+  <button class="button" :class="{'disabled': props.isDisabled}">
     <slot/>
   </button>
 </template>
@@ -17,5 +22,9 @@
    background: $light-color;
    color: $second-color;
  }
+  &.disabled {
+    pointer-events: none;
+    background: #ccc;
+  }
 }
 </style>
