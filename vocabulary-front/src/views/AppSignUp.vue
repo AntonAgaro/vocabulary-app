@@ -1,4 +1,6 @@
-<script setup lang="ts">
+<script setup>
+import db from '@/firebase';
+import { collection, addDoc } from 'firebase/firestore';
 import AppInput from "@/components/UI/AppInput.vue";
 import AppButton from "@/components/UI/AppButton.vue";
 import {ref} from "vue";
@@ -13,18 +15,12 @@ const createUser = async () => {
   const {login, password, confirmPass } = userData.value;
   if (!login || !password || !confirmPass || (password !== confirmPass)) return;
   try {
-    const data = {login, password};
-    const response = await fetch('http://localhost:8000/signup', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data),
+    const docRef = await addDoc(collection(db, "users"), {
+      login,
+      password,
+      created_at: new Date
     });
-    console.log(response);
-    const json = response.json();
-    console.log(json);
+    console.log("Document written with ID: ", docRef.id);
   } catch (e) {
     console.log(e)
   } finally {

@@ -1,4 +1,6 @@
-<script setup lang="ts">
+<script setup>
+import db from "@/firebase";
+import { collection, getDocs } from "firebase/firestore";
 import AppInput from "@/components/UI/AppInput.vue";
 import AppButton from "@/components/UI/AppButton.vue";
 import {ref} from "vue";
@@ -10,31 +12,24 @@ const userData = ref({
 })
 
 const disabledBtn = ref(false);
+const errorMsg = ref('');
 
 const router = useRouter();
 
-const sendUserData = async () => {
-  disabledBtn.value = true;
-  const data = {
-    login: userData.value.login,
-    password: userData.value.password
-  }
+const authUser = async () => {
   try {
-    const response = await fetch('http://localhost:8000/login', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data),
+    const usersCollection = collection(db, "users");
+    const usersSnapshot = await getDocs(usersCollection);
+    const users = usersSnapshot.docs.map(doc => doc.data());
+    const checkUser = users.find(user => {
+      return user.login === userData.value.login && user.password === userData.value.password;
     })
-    console.log(response)
-    const json = await response.json();
-    if (json.login === 'success' && json.user) {
-      const {id, login, password} = json.user;
-      router.push({name: 'vocabulary', params: {id, login, password} })
+    if (checkUser) {
+      router.push({name: 'vocabulary', params: {id: checkUser.id, login: checkUser.login, password: checkUser.password} })
+    } else {
+      errorMsg.value = 'Такого пользователя нет!'
     }
-    console.log(json);
+
   } catch (e) {
     console.log(e)
   } finally {
@@ -49,7 +44,8 @@ const sendUserData = async () => {
 <template>
   <div class="container">
     <h2 class="title">Sign In</h2>
-    <form class="form" @submit.prevent="sendUserData">
+    <div class="error" v-if="errorMsg">{{ errorMsg }}</div>
+    <form class="form" @submit.prevent="authUser">
       <app-input
         type="text"
         id="login"
@@ -95,5 +91,10 @@ const sendUserData = async () => {
   .link {
     color: $main-color;
     font-weight: 500;
+  }
+
+  .error {
+    color: red;
+    margin: 1rem 0;
   }
 </style>
